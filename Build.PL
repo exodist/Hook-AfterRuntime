@@ -12,6 +12,7 @@ my $build = Module::Build->new(
     requires => {
         'Exporter' => 5.57,
         'B::Hooks::EndOfScope' => '0.09',
+        'B::Hooks::Parser' => '0.09',
     },
     build_requires => {
         'Test::More'      => 0.88,
