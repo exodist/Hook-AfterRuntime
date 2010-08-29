@@ -2,11 +2,10 @@ package Hook::AfterRuntime;
 use strict;
 use warnings;
 
-use B::Hooks::EndOfScope;
 use B::Hooks::Parser;
 use base 'Exporter';
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 our @EXPORT = qw/after_runtime/;
 our @IDS;
 
@@ -21,16 +20,24 @@ sub run {
     $IDS[$id]->();
 }
 
-sub after_runtime(&$) {
-    my ( $code, $caller ) = @_;
+sub after_runtime(&) {
+    my ( $code ) = @_;
     my $id = get_id( $code );
 
-    B::Hooks::Parser::inject( ';'
-        . "use B::Hooks::EndOfScope; "
-        . "on_scope_end { "
-        . "Hook::AfterRuntime::run($id)"
-        . " };"
+    B::Hooks::Parser::inject(
+        "; my \$__ENDRUN = Hook::AfterRuntime->new($id);"
     );
+}
+
+sub new {
+    my $class = shift;
+    my ($id) = @_;
+    bless( \$id, $class );
+}
+
+sub DESTROY {
+    my $self = shift;
+    run( $$self );
 }
 
 1;
@@ -67,6 +74,7 @@ Test/More/AutoDone.pm
     use Test::More;
 
     sub import {
+        my $class = shift;
         my $caller = caller;
         eval "package $caller; use Test::More; 1" || die $@;
         after_runtime { done_testing() }
@@ -87,8 +95,8 @@ t/mytest.t
 
 =head1 SEE ALSO
 
-This module uses B::Hooks::EndOfScope, which does almost the same thing, except
-it is triggered after compile-time instead of run-time.
+B::Hooks::EndOfScope, which does almost the same thing, except it is triggered
+after compile-time instead of run-time.
 
 =head1 FENNEC PROJECT
 

@@ -11,7 +11,7 @@ BEGIN {
     use Hook::AfterRuntime;
 
     sub import {
-        after_runtime { $main::TRIGGERED++ } caller;
+        after_runtime { $main::TRIGGERED++ };
     }
 
     $INC{'Test/A.pm'} = __FILE__;

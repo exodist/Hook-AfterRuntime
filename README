@@ -28,6 +28,7 @@ SYNOPSYS
         use Test::More;
 
         sub import {
+            my $class = shift;
             my $caller = caller;
             eval "package $caller; use Test::More; 1" || die $@;
             after_runtime { done_testing() }
@@ -47,8 +48,8 @@ SYNOPSYS
         #EOF
 
 SEE ALSO
-    This module uses B::Hooks::EndOfScope, which does almost the same thing,
-    except it is triggered after compile-time instead of run-time.
+    B::Hooks::EndOfScope, which does almost the same thing, except it is
+    triggered after compile-time instead of run-time.
 
 FENNEC PROJECT
     This module is part of the Fennec project. See Fennec for more details.
