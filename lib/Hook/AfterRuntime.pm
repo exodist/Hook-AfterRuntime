@@ -6,7 +6,7 @@ use B::Hooks::EndOfScope;
 use B::Hooks::Parser;
 use base 'Exporter';
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 our @EXPORT = qw/after_runtime/;
 our @IDS;
 
@@ -18,7 +18,6 @@ sub get_id {
 
 sub run {
     my $id = shift;
-    print "Running code $id!\n";
     $IDS[$id]->();
 }
 
@@ -26,14 +25,12 @@ sub after_runtime(&$) {
     my ( $code, $caller ) = @_;
     my $id = get_id( $code );
 
-    on_scope_end {
-        print "Scope End $id\n" . $IDS[$id] . "\n";
-        print "\n|" . B::Hooks::Parser::get_linestr . "|\n";
-        print "\n|" . B::Hooks::Parser::get_linestr_offset . "|\n";
-        B::Hooks::Parser::inject( ";Hook::AfterRuntime::run($id);" );
-        print "\n|" . B::Hooks::Parser::get_linestr . "|\n";
-        print "\n|" . B::Hooks::Parser::get_linestr_offset . "|\n";
-    };
+    B::Hooks::Parser::inject( ';'
+        . "use B::Hooks::EndOfScope; "
+        . "on_scope_end { "
+        . "Hook::AfterRuntime::run($id)"
+        . " };"
+    );
 }
 
 1;
