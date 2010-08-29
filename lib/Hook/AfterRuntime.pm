@@ -3,21 +3,38 @@ use strict;
 use warnings;
 
 use B::Hooks::EndOfScope;
+use B::Hooks::Parser;
 use base 'Exporter';
 
 our $VERSION = '0.001';
 our @EXPORT = qw/after_runtime/;
+our @IDS;
 
-sub after_runtime(&) {
+sub get_id {
     my $code = shift;
-    on_scope_end {
-        no strict qw/refs vars/;
-        ${"#AfterRuntimeTrigger"} = new( $code );
-    };
+    push @IDS => $code;
+    return $#IDS;
 }
 
-sub new { bless( $_[0], __PACKAGE__ ) }
-sub DESTROY { shift->() }
+sub run {
+    my $id = shift;
+    print "Running code $id!\n";
+    $IDS[$id]->();
+}
+
+sub after_runtime(&$) {
+    my ( $code, $caller ) = @_;
+    my $id = get_id( $code );
+
+    on_scope_end {
+        print "Scope End $id\n" . $IDS[$id] . "\n";
+        print "\n|" . B::Hooks::Parser::get_linestr . "|\n";
+        print "\n|" . B::Hooks::Parser::get_linestr_offset . "|\n";
+        B::Hooks::Parser::inject( ";Hook::AfterRuntime::run($id);" );
+        print "\n|" . B::Hooks::Parser::get_linestr . "|\n";
+        print "\n|" . B::Hooks::Parser::get_linestr_offset . "|\n";
+    };
+}
 
 1;
 

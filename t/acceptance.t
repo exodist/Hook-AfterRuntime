@@ -3,33 +3,13 @@ use strict;
 use warnings;
 
 use Test::More;
+use vars qw/$TRIGGERED/;
+use lib '.', './t';
 
-our $TRIGGERED = 0;
+BEGIN { print "A\n" }
+use TestB;
+BEGIN { print "B\n" }
 
-BEGIN {
-    package Test::A;
-    use strict;
-    use warnings;
-    use Hook::AfterRuntime;
+ok( $main::TRIGGERED, "triggered" );
 
-    sub import { after_runtime { $main::TRIGGERED++ }}
-
-    $INC{ 'Test/A.pm' } = __FILE__;
-}
-
-{
-    package Test::B;
-    use strict;
-    use warnings;
-
-    use Test::More;
-    use Test::A;
-
-    ok( !$main::TRIGGERED, "Not triggered yet." );
-
-    1;
-}
-
-ok( !$main::TRIGGERED, "triggered" );
-
-done_testing;
+done_testing();
