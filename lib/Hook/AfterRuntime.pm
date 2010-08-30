@@ -49,7 +49,7 @@ Hook::AfterRuntime - Run code at the end of the compiling scope's runtime.
 =head1 DESCRIPTION
 
 Useful for creating modules that need a behavior to be added when a module that
-uses them completes it's runtime. Like L<B::Hooks::EndOfScope> except it
+uses them completes its runtime. Like L<B::Hooks::EndOfScope> except it
 triggers for run-time instead of compile-time.
 
 Example where it might be handy:
