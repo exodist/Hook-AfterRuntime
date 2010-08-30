@@ -4,34 +4,34 @@ NAME
 
 DESCRIPTION
     Useful for creating modules that need a behavior to be added when a
-    module that uses them completes it's runtime.
+    module that uses them completes it's runtime. Like B::Hooks::EndOfScope
+    except it triggers for run-time instead of compile-time.
 
     Example where it might be handy:
 
         #!/usr/bin/perl
         use strict;
         use warnings;
-        use Test::More;
+        use Moose;
 
         ...
 
         # It would be nice not to need this....
-        done_testing();
+        __PACKAGE__->make_immutable;
 
 SYNOPSYS
-    Test/More/AutoDone.pm
+    MooseX/AutoImmute.pm
 
-        package Test::More::AutoDone;
+        package MooseX::AutoImmute;
         use strict;
         use warnings;
         use Hook::AfterRuntime;
-        use Test::More;
 
         sub import {
             my $class = shift;
             my $caller = caller;
-            eval "package $caller; use Test::More; 1" || die $@;
-            after_runtime { done_testing() }
+            eval "package $caller; use Moose; 1" || die $@;
+            after_runtime { $caller->make_immutable }
         }
 
         1;
@@ -41,15 +41,17 @@ SYNOPSYS
         #!/usr/bin/perl
         use strict;
         use warnings;
-        use Test::More::AutoDone;
+        use MooseX::AutoImmute;
 
-        ok( 1, "1 is true last I checked" );
+        ....
 
         #EOF
+        # Package is now immutable autamatically
 
 SEE ALSO
-    B::Hooks::EndOfScope, which does almost the same thing, except it is
-    triggered after compile-time instead of run-time.
+    B::Hooks::EndOfScope
+        Does almost the same thing, except it is triggered after
+        compile-time instead of run-time.
 
 FENNEC PROJECT
     This module is part of the Fennec project. See Fennec for more details.

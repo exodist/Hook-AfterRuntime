@@ -5,7 +5,7 @@ use warnings;
 use B::Hooks::Parser;
 use base 'Exporter';
 
-our $VERSION = '0.003';
+our $VERSION = '0.004';
 our @EXPORT = qw/after_runtime/;
 our @IDS;
 
@@ -49,35 +49,35 @@ Hook::AfterRuntime - Run code at the end of the compiling scope's runtime.
 =head1 DESCRIPTION
 
 Useful for creating modules that need a behavior to be added when a module that
-uses them completes it's runtime.
+uses them completes it's runtime. Like L<B::Hooks::EndOfScope> except it
+triggers for run-time instead of compile-time.
 
 Example where it might be handy:
 
     #!/usr/bin/perl
     use strict;
     use warnings;
-    use Test::More;
+    use Moose;
 
     ...
 
     # It would be nice not to need this....
-    done_testing();
+    __PACKAGE__->make_immutable;
 
 =head1 SYNOPSYS
 
-Test/More/AutoDone.pm
+MooseX/AutoImmute.pm
 
-    package Test::More::AutoDone;
+    package MooseX::AutoImmute;
     use strict;
     use warnings;
     use Hook::AfterRuntime;
-    use Test::More;
 
     sub import {
         my $class = shift;
         my $caller = caller;
-        eval "package $caller; use Test::More; 1" || die $@;
-        after_runtime { done_testing() }
+        eval "package $caller; use Moose; 1" || die $@;
+        after_runtime { $caller->make_immutable }
     }
 
     1;
@@ -87,16 +87,23 @@ t/mytest.t
     #!/usr/bin/perl
     use strict;
     use warnings;
-    use Test::More::AutoDone;
+    use MooseX::AutoImmute;
 
-    ok( 1, "1 is true last I checked" );
+    ....
 
     #EOF
+    # Package is now immutable autamatically
 
 =head1 SEE ALSO
 
-B::Hooks::EndOfScope, which does almost the same thing, except it is triggered
-after compile-time instead of run-time.
+=over 4
+
+=item B::Hooks::EndOfScope
+
+Does almost the same thing, except it is triggered after compile-time instead
+of run-time.
+
+=back
 
 =head1 FENNEC PROJECT
 
