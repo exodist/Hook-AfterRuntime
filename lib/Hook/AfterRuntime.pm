@@ -5,9 +5,10 @@ use warnings;
 use B::Hooks::Parser;
 use base 'Exporter';
 
-our $VERSION = '0.004';
+our $VERSION = '0.005';
 our @EXPORT = qw/after_runtime/;
 our @IDS;
+our $HOOK_ID = 'AAAAAAAA';
 
 sub get_id {
     my $code = shift;
@@ -25,7 +26,7 @@ sub after_runtime(&) {
     my $id = get_id( $code );
 
     B::Hooks::Parser::inject(
-        "; my \$__ENDRUN = Hook::AfterRuntime->new($id);"
+        "; my \$__ENDRUN" . $HOOK_ID++ . " = Hook::AfterRuntime->new($id);"
     );
 }
 
@@ -93,6 +94,77 @@ t/mytest.t
 
     #EOF
     # Package is now immutable autamatically
+
+=head1 CAVEATS
+
+It is important to understand how Hook::AfterRuntime works n order to know its
+limitations. When you use a module that calls after_runtime() in its import()
+method, after_runtime() will inject code directly after your import statement:
+
+    import MooseX::AutoImmute;
+
+becomes:
+
+    import MooseX::AutoImmute; my $__ENDRUNXXXXXXXX = Hook::AfterRuntime->new($id);
+
+This creates a Hook::AfterRuntime object in the corrunt scope. This object's id
+is used to reference the code provided to after_runtime() in
+MooseX::AutoImmute()'s import() method. When the object falls out of scope the
+DESTROY() method kicks in and calls the referenced code. This occurs at the end
+of the file when 'use' is called at the package level.
+
+=head2 EDGE CASES
+
+=over 4
+
+=item Loading in a scope other than package level:
+
+If you use the 'use' directive on a level other than the package level, the
+behavior will trigger when the end of the scope is reached. If that is a
+subroutine than it will trigger at the end of EVERY call to that subroutine.
+B<You really should not import a class using Hook::AfterRuntime outside tha
+package level scope.>
+
+    package XXX;
+
+    sub thing {
+        # Happens at compile time
+        use Object::Using::AfterRuntime;
+
+        # At run time the hook behavior triggers here!
+    }
+
+    # hook behavior has not triggered
+
+    thing()
+
+    # Hook behavior has triggered
+
+    1;
+
+=item require, and use class ();
+
+    When require and use class () are used the import method is not called,
+    thus the hook is never installed.
+
+=item class->import
+
+    The hook effects the code that is currently compiling. calling
+    class->import happens after the compilation phase. You must wrap the
+    statement in a BEGIN {} to call import manually. Failure to do this will
+    result in the hook triggering in the wrong class, or not at all.
+
+=back
+
+=head1 USER WARNING
+
+When you write a class that depends on this hook you should insert the
+following warning into the docs:
+
+This class uses L<Hook::AfterRuntime>, it B<MUST> be imported at the package
+level at compile time. This means 'use MODULE' or 'BEGIN { require MODULE;
+MODULE->import() }'. Failure to use one of these correct forms will result in a
+missing hook and unpredictable behavior.
 
 =head1 SEE ALSO
 
