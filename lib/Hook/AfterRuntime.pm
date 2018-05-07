@@ -1,6 +1,7 @@
 package Hook::AfterRuntime;
 use strict;
 use warnings;
+use 5.006;
 
 use B::Hooks::Parser;
 use base 'Exporter';
