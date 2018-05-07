@@ -10,6 +10,7 @@ my $build = Module::Build->new(
     dist_author => 'Chad Granum <exodist7@gmail.com>',
     create_readme => 1,
     requires => {
+        'perl' => '5.006',
         'Exporter' => 5.57,
         'B::Hooks::Parser' => '0.09',
     },
