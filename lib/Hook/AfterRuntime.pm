@@ -201,11 +201,12 @@ The primary Fennec project that ties them all together.
 
 Chad Granum L<exodist7@gmail.com>
 
-=head1 COPYRIGHT
+=head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2010 Chad Granum
+Copyright (C) 2010-2018 Chad Granum
 
-Hook-AfterRuntime is free software; Standard Perl licence.
+Hook-AfterRuntime is free software, you can redistribute it and/or modify it
+under the same terms as the Perl 5 programming language system itself.
 
 Hook-AfterRuntime is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
