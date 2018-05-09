@@ -22,7 +22,7 @@ sub run {
     $IDS[$id]->();
 }
 
-sub after_runtime(&) {
+sub after_runtime(&) {  ## no critic
     my ( $code ) = @_;
     my $id = get_id( $code );
 
