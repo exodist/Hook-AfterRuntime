@@ -68,3 +68,7 @@
 
 # Avoid archives of this distribution
 \bHook-AfterRuntime-[\d\.\_]+
+
+# Avoid continuous integration service configuration files
+\.travis.yml
+\.appveyor.yml
