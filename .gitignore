@@ -2,6 +2,7 @@
 Build
 Hook-AfterRuntime-*.tar.gz
 MANIFEST
+MANIFEST.bak
 META.*
 MYMETA.*
 _build/
