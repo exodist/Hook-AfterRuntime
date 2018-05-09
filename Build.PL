@@ -23,7 +23,7 @@ my $build = Module::Build->new(
         resources => {
             repository => 'http://github.com/exodist/Hook-AfterRuntime',
             bugtracker => 'http://github.com/exodist/Hook-AfterRuntime/issues',
-            homepage   => 'http://open-exodus.net/projects/Hook-AfterRuntime'
+            homepage   => 'http://github.com/exodist/Hook-AfterRuntime'
         },
     }
 );
