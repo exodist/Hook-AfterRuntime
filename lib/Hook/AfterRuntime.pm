@@ -6,7 +6,7 @@ use 5.006;
 use B::Hooks::Parser;
 use base 'Exporter';
 
-our $VERSION = '0.005';
+our $VERSION = '0.006';
 our @EXPORT = qw/after_runtime/;
 our @IDS;
 our $HOOK_ID = 'AAAAAAAA';
