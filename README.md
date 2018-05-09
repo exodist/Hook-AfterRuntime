@@ -1,5 +1,7 @@
 # Hook::AfterRuntime
 
+[![Build status](https://ci.appveyor.com/api/projects/status/xpp5rpg9v1gqlh5k/branch/master?svg=true)](https://ci.appveyor.com/project/paultcochrane/hook-afterruntime-m8v6m/branch/master)
+
 Run code at the end of the compiling scope's runtime.
 
 Useful for creating modules that need a behavior to be added when a module
